@@ -1,5 +1,5 @@
 
-function [r, xn,  decoded] = poopFunc(pulse_shape, sigma)
+function [r, xn,  decoded, SNR] = poopFunc(pulse_shape, sigma)
 Tp = 0.1; % Half pulse width
 sample_period = Tp/50; % dt, pulse and recieve sample period
 sample_freq = 1/sample_period; % Frequency of pulse and recieve signal 
@@ -50,3 +50,4 @@ for i = pulselen + 1:(pulselen * factor + mod(factor, 2))/2:filterlen-pulselen *
        decoded(a) = -1;
     end
 end
+SNR = (sum(y.^2))/(sum(noise.^2));
