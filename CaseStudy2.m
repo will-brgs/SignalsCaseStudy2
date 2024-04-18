@@ -1,6 +1,6 @@
 %% Signals and Systems Matlab Homework #6
 %% Introduction
-% * Author:                   Will Burgess, Leela Srinivas, Mack LaRosa
+% * Author:                   Mack LaRosa, Will Burgess, Leela Srinivas
 % * Class:                    ESE 351
 % * Date:                     Created 4/12/2024, Last Edited 4/25/2024
 %% Housekeeping
