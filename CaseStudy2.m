@@ -157,3 +157,10 @@ subplot(2,1,2), plot(f,abs(fft(x,Nfft)))
 xlabel('frequency (Hz)'), ylabel('|X(j\omega)|')
 
 pulse_sinc = x;
+
+%%
+[r, xn, decoded] = poopFunc(pulse, 1);
+figure, plot(r)
+
+figure, subplot(2,1,1),stem(xn)
+subplot(2,1,2),stem(decoded)
