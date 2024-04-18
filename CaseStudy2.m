@@ -22,9 +22,9 @@ Ts = bit_period;
 rect = ones(1,50);
 
 pulse = 2 * conv(rect, rect);
-
+%%
 % replace pulse with sinc
-t = -5*Ts:dt:5*Ts; % time vector
+t = -2*Ts:dt:2*Ts; % time vector
 pulse = sinc(t/Ts);
 
 
@@ -55,7 +55,7 @@ y = conv(imp_train,pulse);
 % figure, subplot (2,1,1),plot(y)
 % subplot(2,1,2),stem(xn)
 
-sigma = 1;
+sigma = 0;
 noise = sigma * max(y) * randn(1,length(y));
 r = y + (noise * sigma);
 
