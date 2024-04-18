@@ -11,13 +11,23 @@ clc
 %% Generate Input Signal and Add Noise Factor, Bitrate = 1/Tp
 Tp = 0.1; % Half pulse width
 sample_period = Tp/50; % dt, pulse and recieve sample period
+dt = sample_period;
 sample_freq = 1/sample_period; % Frequency of pulse and recieve signal 
 
 bit_rate = 1/(1 * Tp); %Fb, frequency of bits sent out
 bit_period = 1/bit_rate; % Ts, Time between bits sent out
+Ts = bit_period;
 
+%  Generate Message
 rect = ones(1,50);
+
 pulse = 2 * conv(rect, rect);
+
+% replace pulse with sinc
+t = -5*Ts:dt:5*Ts; % time vector
+pulse = sinc(t/Ts);
+
+
 pulse_fft = fftshift(pulse);
 
 N = 20;
@@ -35,8 +45,11 @@ for k = 1:length(imp_train)
     imp_train(k) = 0;    
     end
 end
-
 sampleTimes = 0:sample_period:(N*bit_period)-sample_period;
+
+
+% Mack is a Bitchass Hoe: finish generation with signal
+
 
 y = conv(imp_train,pulse);
 % figure, subplot (2,1,1),plot(y)
@@ -128,3 +141,19 @@ disp(['SNR: ' , num2str(SNR)])
 disp(['Error: ' ,num2str(error),' percent'])
 
 %% Generate Variable length Sinc Function
+
+%% demo - Sinc pulse shape
+Ts = .1; % symbol period (rate 1/Ts)
+dt = .01; % sample period
+t = -5*Ts:dt:5*Ts; % time vector
+x = sinc(t/Ts); % define sinc, note Matlab convention sinc(x) = sin(pi*x)/(pi*x)
+figure
+subplot(2,1,1), plot(t,x)
+xlabel('time (s)'), ylabel('x(t)'), title('Truncated sinc')
+fs = 1/dt; % sample frequency
+Nfft = 1024; % length of fft
+f = [0:fs/Nfft:fs-fs/Nfft];
+subplot(2,1,2), plot(f,abs(fft(x,Nfft)))
+xlabel('frequency (Hz)'), ylabel('|X(j\omega)|')
+
+pulse_sinc = x;
