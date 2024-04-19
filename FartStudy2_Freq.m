@@ -12,7 +12,8 @@ Ts = bit_period;
 
 sigma = 1;
 %% Define Pulse Shapes
-w = -1*Ts:dt:1*Ts; % frequency vector
+%w = linspace(-5, 5, (2*Ts)/dt+1); % frequency vector
+w = -1*Ts:dt:Ts;
 
 pulse_square_freq = ones(1,length(w));
 pulse_square_freq(1,1:round(1/4*length(pulse_square_freq))) = -1;
@@ -82,13 +83,13 @@ freq1 = 20;
 freq2 = 30;
 freq3 = 40;
 
-band1 = pulse_sinc_freq .* cos(1j*freq1*w);
-band2 = pulse_sinc_freq .* cos(1j*freq2*w);
-band3 = pulse_sinc_freq .* cos(1j*freq3*w);
+band1 = pulse_sinc_freq * cos(2*pi*freq1*w);
+band2 = pulse_sinc_freq * cos(2*pi*freq2*w);
+band3 = pulse_sinc_freq * cos(2*pi*freq3*w);
 
-band1 = conv(pulse_sinc_freq, cos(1j*freq1*w));
-band2 = conv(pulse_sinc_freq, cos(1j*freq2*w));
-band3 = conv(pulse_sinc_freq, cos(1j*freq3*w));
+% band1 = conv(pulse_sinc_freq, cos(2*pi*freq1*w)));
+% band2 = conv(pulse_sinc_freq, cos(2*pi*freq2*w)));
+% band3 = conv(pulse_sinc_freq, cos(2*pi*freq3*w)));
 
 figure, hold on
 subplot(3,1,1),plot(abs(band1))
