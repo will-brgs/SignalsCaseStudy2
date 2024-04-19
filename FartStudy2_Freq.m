@@ -13,13 +13,13 @@ Ts = bit_period;
 sigma = 0;
 %% Define Pulse Shapes
 %w = linspace(-5, 5, (2*Ts)/dt+1); % frequency vector
-w = -1*Ts:dt:Ts;
+t = -Ts:dt:Ts; % MUST BE 100 Long
 
 % pulse_square_freq = ones(1,length(w));
 % pulse_square_freq(1,1:round(1/4*length(pulse_square_freq))) = -1;
 % pulse_square_freq(1,round(3/4*length(pulse_square_freq)):end) = -1;
 
-pulse_rcos_freq = rcosdesign(.5, 3, length(w)+1);
+pulse_rcos_time = rcosdesign(.25, 1, length(t)+1);
 
 % T = length(pulse_rcos_freq);
 % pulse_rcos_freq = ones(1,length(w));
@@ -30,11 +30,11 @@ pulse_rcos_freq = rcosdesign(.5, 3, length(w)+1);
 % inside_cos_thing_right = ((pi*T)/beta) * (1:round(1/4*length(pulse_rcos_freq)) - (1-beta)/(2*T));
 % pulse_rcos_freq(1,round(3/4*length(pulse_square_freq)):end) = -1;
 % 
-% pulse_sinc_freq = sinc((20*w)/Ts);
+pulse_sinc_time = sinc((20*t)/Ts);
 
 
-pulse_rcos_time = ifftshift(ifft(pulse_rcos_freq));
-pulse_sinc_time = ifftshift(ifft(pulse_sinc_freq));
+%pulse_rcos_time = ifftshift(ifft(pulse_rcos_freq));
+%pulse_sinc_time = ifftshift(ifft(pulse_sinc_freq));
 
 figure, hold on
 subplot(2,2,1), stem(pulse_rcos_freq)
@@ -94,9 +94,9 @@ freq1 = 20;
 freq2 = 30;
 freq3 = 40;
 
-band1 = pulse_sinc_time .* cos(2*pi*freq1*w);
-band2 = pulse_sinc_time .* cos(2*pi*freq2*w);
-band3 = pulse_sinc_time .* cos(2*pi*freq3*w);
+band1 = pulse_sinc_time .* cos(2*pi*freq1*t);
+band2 = pulse_sinc_time .* cos(2*pi*freq2*t);
+band3 = pulse_sinc_time .* cos(2*pi*freq3*t);
 
 fs = 1/dt; % sample frequency
 Nfft = 1024; % length of fft
