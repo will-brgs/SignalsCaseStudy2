@@ -10,7 +10,7 @@ bit_rate = 1/(1 * Tp); %Fb, frequency of bits sent out
 bit_period = 1/bit_rate; % Ts, Time between bits sent out
 Ts = bit_period;
 
-sigma = 0;
+sigma = 1;
 %% Define Pulse Shapes
 %w = linspace(-5, 5, (2*Ts)/dt+1); % frequency vector
 t = -Ts:dt:Ts; % MUST BE 100 Long
@@ -46,12 +46,11 @@ hold off
 [~, xn, decoded, SNR] = poopFunc(abs(pulse_rcos_time), sigma);
 
 figure, hold on
-subplot(2,1,1),stem(xn)
-xlabel('Index'),ylabel('Amplitude'),title('Transmitted')
-subplot(2,1,2),stem(decoded)
-xlabel('Index'),ylabel('Amplitude'),title('Decoded')
+subplot(2,2,1),stem(xn,'b','filled')
+xlabel('Index'),ylabel('Amplitude'),title('Transmitted - RCos Pulse')
+subplot(2,2,2),stem(decoded, 'r','filled')
+xlabel('Index'),ylabel('Amplitude'),title('Decoded - RCos Pulse')
 sgtitle('System Using Sinc Pulse')
-hold off
 
 % display performance results
 error = (sum(xn ~= decoded))/(length(decoded)); 
@@ -64,12 +63,11 @@ disp(['Error: ' ,num2str(error*100),' percent'])
 %% Use Function on Sinc Pulse
 [~, xn, decoded, SNR] = poopFunc(abs(pulse_sinc_time), sigma);
 
-figure, hold on
-subplot(2,1,1),stem(xn)
-xlabel('Index'),ylabel('Amplitude'),title('Transmitted')
-subplot(2,1,2),stem(decoded)
-xlabel('Index'),ylabel('Amplitude'),title('Decoded')
-sgtitle('System Using Square Pulse')
+subplot(2,2,3),stem(xn,'b','filled')
+xlabel('Index'),ylabel('Amplitude'),title('Transmitted - Sinc Pulse')
+subplot(2,2,4),stem(decoded, 'r','filled')
+xlabel('Index'),ylabel('Amplitude'),title('Decoded - Sinc Pulse')
+sgtitle('System Decoding Responses')
 hold off
 
 % display performance results
@@ -83,16 +81,15 @@ disp(['SNR: ' , num2str(SNR)])
 disp(['Error: ' ,num2str(error*100),' percent'])
 
 %% Up/down convert with 3 channel system
-freq1 = 20;
-freq2 = 30;
-freq3 = 40;
+frequencies = [20,30,40];
 
-band1 = pulse_sinc_time .* cos(2*pi*freq1*t);
-band2 = pulse_sinc_time .* cos(2*pi*freq2*t);
-band3 = pulse_sinc_time .* cos(2*pi*freq3*t);
+
+band1 = pulse_sinc_time .* cos(2*pi*frequencies(1)*t);
+band2 = pulse_sinc_time .* cos(2*pi*frequencies(2)*t);
+band3 = pulse_sinc_time .* cos(2*pi*frequencies(3)*t);
 
 fs = 1/dt; % sample frequency
-Nfft = 1024; % length of fft
+Nfft = length(pulse_sinc_time); % length of fft
 f = 0:fs/Nfft:fs-fs/Nfft;
 
 
@@ -101,11 +98,11 @@ f = 0:fs/Nfft:fs-fs/Nfft;
 % band3 = conv(pulse_sinc_freq, cos(2*pi*freq3*w)));
 
 figure, hold on
-subplot(3,1,1),plot(f,abs(fft(band1,Nfft)))
+subplot(3,1,1),plot(f,abs(fft(band1)))
 xlabel('Index'),ylabel('Amplitude'),title('Band 1, 20Hz')
-subplot(3,1,2),plot(f,abs(fft(band2,Nfft)))
+subplot(3,1,2),plot(f,abs(fft(band2)))
 xlabel('Index'),ylabel('Amplitude'),title('Band 2, 30Hz')
-subplot(3,1,3),plot(f,abs(fft(band3,Nfft)))
+subplot(3,1,3),plot(f,abs(fft(band3)))
 xlabel('Index'),ylabel('Amplitude'),title('Band 3, 40 Hz')
 sgtitle('Three Upscaled bands')
 hold off
