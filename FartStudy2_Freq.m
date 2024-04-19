@@ -19,33 +19,26 @@ t = -Ts:dt:Ts; % MUST BE 100 Long
 % pulse_square_freq(1,1:round(1/4*length(pulse_square_freq))) = -1;
 % pulse_square_freq(1,round(3/4*length(pulse_square_freq)):end) = -1;
 
-pulse_rcos_time = rcosdesign(.25, 1, length(t)+1);
+numsymbols = 10;
+pulse_rcos_time = rcosdesign(0.2,numsymbols,((length(t)-1)/numsymbols), 'normal');
 
-% T = length(pulse_rcos_freq);
-% pulse_rcos_freq = ones(1,length(w));
-% 
-% inside_cos_thing_left = ((pi*T)/beta) * (1:round(1/4*length(pulse_rcos_freq)) - (1-beta)/(2*T));
-% pulse_rcos_freq(1, 1:round(1/4*length(pulse_rcos_freq))) = 0.5*(1+cos(inside_cos_thing_left));
-% 
-% inside_cos_thing_right = ((pi*T)/beta) * (1:round(1/4*length(pulse_rcos_freq)) - (1-beta)/(2*T));
-% pulse_rcos_freq(1,round(3/4*length(pulse_square_freq)):end) = -1;
-% 
-pulse_sinc_time = sinc((20*t)/Ts);
+pulse_sinc_time = sinc((10*t)/Ts);
 
 
-%pulse_rcos_time = ifftshift(ifft(pulse_rcos_freq));
-%pulse_sinc_time = ifftshift(ifft(pulse_sinc_freq));
+pulse_rcos_freq = fftshift(fft(pulse_rcos_time));
+pulse_sinc_freq = fftshift(fft(pulse_sinc_time));
 
 figure, hold on
-subplot(2,2,1), stem(pulse_rcos_freq)
-xlabel('Frequency'),ylabel('Amplitude'),title('Raised Cosine Pulse in Frequency Domain')
-subplot(2,2,2), plot(abs(pulse_rcos_time), 'r')
+subplot(2,2,1), stem((pulse_rcos_time), 'b')
 xlabel('Time'),ylabel('Amplitude'),title('Raised Cos Pulse in Time Domain')
+subplot(2,2,2), plot(abs(pulse_rcos_freq),'r')
+xlabel('Frequency'),ylabel('Amplitude'),title('Raised Cosine Pulse in Frequency Domain')
 
-subplot(2,2,3), stem(pulse_sinc_freq)
-xlabel('Frequency'),ylabel('Amplitude'),title('Sinc Pulse in Frequency Domain')
-subplot(2,2,4), plot(abs(pulse_sinc_time), 'r')
+subplot(2,2,3), stem((pulse_sinc_time), 'b')
 xlabel('Time'),ylabel('Amplitude'),title('Sinc Pulse in Time Domain')
+subplot(2,2,4), plot(abs(pulse_sinc_freq), 'r')
+xlabel('Frequency'),ylabel('Amplitude'),title('Sinc Pulse in Frequency Domain')
+
 
 sgtitle('Pulse Shapes Utilized')
 hold off
@@ -101,7 +94,6 @@ band3 = pulse_sinc_time .* cos(2*pi*freq3*t);
 fs = 1/dt; % sample frequency
 Nfft = 1024; % length of fft
 f = 0:fs/Nfft:fs-fs/Nfft;
-
 
 
 % band1 = conv(pulse_sinc_freq, cos(2*pi*freq1*w)));
