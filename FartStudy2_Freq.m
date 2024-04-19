@@ -42,7 +42,7 @@ xlabel('Frequency'),ylabel('Amplitude'),title('Sinc Pulse in Frequency Domain')
 
 sgtitle('Pulse Shapes Utilized')
 hold off
-%% Use Function on Square Pulse
+%% Use Function on Raised Cosine Pulse Shape
 [~,~,xn, decoded, SNR] = poopFunc(abs(pulse_rcos_time), sigma);
 
 figure, hold on
@@ -80,7 +80,7 @@ disp(['Standard Deviation: ' , num2str(sigma)])
 disp(['SNR: ' , num2str(SNR)])
 disp(['Error: ' ,num2str(error*100),' percent'])
 
-%% Up/down convert with 3 channel system
+%% Up/down convert with 3 channel system - Sinc Pulse Shape
 frequencies = [20,30,40];
 [~,y, ~, ~, ~] = poopFunc(abs(pulse_sinc_time), sigma);
 
@@ -114,6 +114,44 @@ figure, hold on
 plot(f,abs(fft(band1)),'r')
 plot(f,abs(fft(band2)),'m')
 plot(f,abs(fft(band3)),'b')
-xlabel('Index'),ylabel('Amplitude'),title('Merged Up-Converted Channels')
+xlabel('Index'),ylabel('Amplitude'),title('Merged Up-Converted Channels - Sinc Pulse Shape')
+legend('20Hz Band','30Hz Band','40Hz Band')
+hold off
+
+%% Up/down convert with 3 channel system -  Raised Cosine Shape
+frequencies = [20,30,40];
+[~,y, ~, ~, ~] = poopFunc(abs(pulse_rcos_time), sigma);
+
+t_recieved = -Tp:dt:N * Ts + Tp -dt;
+
+sinc_data_convolved = y;
+band1 = sinc_data_convolved .* cos(2*pi*frequencies(1)*t_recieved);
+band2 = sinc_data_convolved .* cos(2*pi*frequencies(2)*t_recieved);
+band3 = sinc_data_convolved .* cos(2*pi*frequencies(3)*t_recieved);
+
+fs = 1/dt; % sample frequency
+Nfft = length(sinc_data_convolved); % length of fft
+f = 0:fs/Nfft:fs-fs/Nfft;
+
+
+% band1 = conv(pulse_sinc_freq, cos(2*pi*freq1*w)));
+% band2 = conv(pulse_sinc_freq, cos(2*pi*freq2*w)));
+% band3 = conv(pulse_sinc_freq, cos(2*pi*freq3*w)));
+
+figure, hold on
+subplot(3,1,1),plot(f,abs(fft(band1)))
+xlabel('Index'),ylabel('Amplitude'),title('Band 1, 20Hz')
+subplot(3,1,2),plot(f,abs(fft(band2)))
+xlabel('Index'),ylabel('Amplitude'),title('Band 2, 30Hz')
+subplot(3,1,3),plot(f,abs(fft(band3)))
+xlabel('Index'),ylabel('Amplitude'),title('Band 3, 40 Hz')
+sgtitle('Three Upscaled bands')
+hold off
+
+figure, hold on
+plot(f,abs(fft(band1)),'r')
+plot(f,abs(fft(band2)),'m')
+plot(f,abs(fft(band3)),'b')
+xlabel('Index'),ylabel('Amplitude'),title('Merged Up-Converted Channels - RCos Pulse Shape')
 legend('20Hz Band','30Hz Band','40Hz Band')
 hold off
