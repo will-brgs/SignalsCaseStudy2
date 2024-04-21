@@ -88,9 +88,13 @@ frequencies = [20,30,40];
 t_recieved = -Tp:dt:N * Ts + Tp -dt;
 
 sinc_data_convolved = y;
-band1 = sinc_data_convolved .* cos(2*pi*frequencies(1)*t_recieved);
-band2 = sinc_data_convolved .* cos(2*pi*frequencies(2)*t_recieved);
-band3 = sinc_data_convolved .* cos(2*pi*frequencies(3)*t_recieved);
+band1_up = sinc_data_convolved .* cos(2*pi*frequencies(1)*t_recieved);
+band2_up = sinc_data_convolved .* cos(2*pi*frequencies(2)*t_recieved);
+band3_up = sinc_data_convolved .* cos(2*pi*frequencies(3)*t_recieved);
+
+band1_up_fft = fft(band1_up);
+band2_up_fft = fft(band2_up);
+band3_up_fft = fft(band3_up);
 
 fs = 1/dt; % sample frequency
 Nfft = length(sinc_data_convolved); % length of fft
@@ -98,34 +102,38 @@ f = 0:fs/Nfft:fs-fs/Nfft;
 
 %UPCONVERTING
 figure, hold on
-subplot(3,1,1),plot(f,abs(fft(band1)))
+subplot(3,1,1),plot(f,abs(band1_up_fft))
 xlabel('Index'),ylabel('Amplitude'),title('Band 1, 20Hz')
-subplot(3,1,2),plot(f,abs(fft(band2)))
+subplot(3,1,2),plot(f,abs(band2_up_fft))
 xlabel('Index'),ylabel('Amplitude'),title('Band 2, 30Hz')
-subplot(3,1,3),plot(f,abs(fft(band3)))
+subplot(3,1,3),plot(f,abs(band3_up_fft))
 xlabel('Index'),ylabel('Amplitude'),title('Band 3, 40 Hz')
 sgtitle('Three Upscaled bands - Sinc Pulse Shape')
 hold off
 
 figure, hold on
-plot(f,abs(fft(band1)),'r')
-plot(f,abs(fft(band2)),'m')
-plot(f,abs(fft(band3)),'b')
+plot(f,abs(band1_up_fft),'r')
+plot(f,abs(band2_up_fft),'m')
+plot(f,abs(band3_up_fft),'b')
 xlabel('Index'),ylabel('Amplitude'),title('Merged Up-Converted Channels - Sinc Pulse Shape')
 legend('20Hz Band','30Hz Band','40Hz Band')
 hold off
 
-upconverted_sinc = band1 + band2 + band3;
+upconverted_sinc = band1_up + band2_up + band3_up;
 
 % DOWNCONVERTING
 band1_down = upconverted_sinc .* sin(2*pi*frequencies(1)*t_recieved);
 band1_down = lowpass(band1_down, 6, sample_freq);
+band1_down_fft = fft(band1_down);
 
 band2_down = upconverted_sinc .* sin(2*pi*frequencies(2)*t_recieved);
 band2_down = lowpass(band2_down, 6, sample_freq);
+band2_down_fft = fft(band2_down);
 
 band3_down = upconverted_sinc .* sin(2*pi*frequencies(3)*t_recieved);
 band3_down = lowpass(band3_down, 6, sample_freq);
+band3_down_fft = fft(band3_down);
+
 
 figure, hold on
 subplot(3,1,1),plot(f,abs(fft(band1_down)))
