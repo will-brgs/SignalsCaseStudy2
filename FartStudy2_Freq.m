@@ -1,6 +1,6 @@
 %% Housekeeping
-close all
 clear
+close all
 %% Generate Input Signal and Add Noise Factor, Bitrate = 1/Tp
 Tp = 0.1; % Half pulse width
 sample_period = Tp/40; % dt, pulse and recieve sample period
@@ -21,7 +21,7 @@ t = -Ts:dt:Ts;
 % pulse_square_freq(1,round(3/4*length(pulse_square_freq)):end) = -1;
 
 numsymbols = 2;
-pulse_rcos_time = rcosdesign(0.2,numsymbols,((length(t)-1)/numsymbols), 'normal');
+pulse_rcos_time = rcosdesign(0.01,numsymbols,((length(t)-1)/numsymbols), 'normal');
 
 pulse_sinc_time = sinc((2*t)/Ts);
 
@@ -83,11 +83,11 @@ disp(['Error: ' ,num2str(error*100),' percent'])
 
 %% Up/down convert with 3 channel system - Sinc Pulse Shape
 frequencies = [20,30,40];
-[~,y, xn, ~, ~] = poopFunc(abs(pulse_sinc_time), sigma);
+[r,y, xn, ~, ~] = poopFunc(abs(pulse_sinc_time), sigma);
 
 t_recieved = -Tp:dt:N * Ts + Tp -dt;
 
-sinc_data_convolved = y;
+sinc_data_convolved = r;
 band1_up = sinc_data_convolved .* cos(2*pi*frequencies(1)*t_recieved);
 band2_up = sinc_data_convolved .* cos(2*pi*frequencies(2)*t_recieved);
 band3_up = sinc_data_convolved .* cos(2*pi*frequencies(3)*t_recieved);
@@ -122,17 +122,17 @@ hold off
 upconverted_sinc = band1_up + band2_up + band3_up;
 
 % DOWNCONVERTING
-band1_down = upconverted_sinc .* sin(2*pi*frequencies(1)*t_recieved);
+band1_down = upconverted_sinc .* cos(2*pi*frequencies(1)*t_recieved);
 %band1_down = lowpass(band1_down, 6, sample_freq);
 band1_down = conv(band1_down, pulse_sinc_time);
 band1_down_fft = fft(band1_down);
 
-band2_down = upconverted_sinc .* sin(2*pi*frequencies(2)*t_recieved);
-band2_down = lowpass(band2_down, 6, sample_freq);
-%band2_down = conv(band2_down, pulse_sinc_time);
+band2_down = upconverted_sinc .* cos(2*pi*frequencies(2)*t_recieved);
+%band2_down = lowpass(band2_down, 6, sample_freq);
+band2_down = conv(band2_down, pulse_sinc_time);
 band2_down_fft = fft(band2_down);
 
-band3_down = upconverted_sinc .* sin(2*pi*frequencies(3)*t_recieved);
+band3_down = upconverted_sinc .* cos(2*pi*frequencies(3)*t_recieved);
 %band3_down = lowpass(band3_down, 6, sample_freq);
 band3_down = conv(band3_down, pulse_sinc_time);
 band3_down_fft = fft(band3_down);
@@ -148,12 +148,15 @@ xlabel('Index'),ylabel('Amplitude'),title('Band 3, 40 Hz')
 sgtitle('Three Downconverted bands - Sinc Pulse Shape')
 hold off
 
-% Decode
-% Because multiplication with the sine causes a negative and positive
-% duplicate on the left hand side and right hand side of the x-axis
-% respectively, the pulse that is being decoded(the left hand pulse) is
-% inverted and therefore the decoding must be inverted as well to produce
-% the correct output.
+% Downconverted Figure
+% figure, hold on
+% plot(f,abs((band1_down)),'r')
+% plot(f,abs((band2_down)),'m')
+% plot(f,abs((band3_down)),'b')
+% xlabel('Index'),ylabel('Amplitude'),title('Merged Down-Converted Channels - Sinc Pulse Shape')
+% legend('20Hz Band','30Hz Band','40Hz Band')
+% hold off
+% Decode 
 
 % Decode channnel 1
 decoded_1 = zeros(1, N);
@@ -164,12 +167,12 @@ factor = 1/(bit_rate * Tp); % find factor relating Ts and Tp, use that to modify
 for i = pulselen + 1:(pulselen * factor + mod(factor, 2))/2:filterlen-pulselen * factor - 1
     a = a + 1;
     if(band1_down(i) > 0)
-        decoded_1(a) = -1;
+        decoded_1(a) = 1;
     else
-       decoded_1(a) = 1;
+       decoded_1(a) = -1;
     end
 end
-% Decode channel 2, Should be flipped
+% Decode channel 2
 decoded_2 = zeros(1, N);
 a = 0;
 pulselen = length(pulse_sinc_time);
@@ -178,15 +181,13 @@ factor = 1/(bit_rate * Tp); % find factor relating Ts and Tp, use that to modify
 for i = pulselen + 1:(pulselen * factor + mod(factor, 2))/2:filterlen-pulselen * factor - 1
     a = a + 1;
     if(band2_down(i) > 0)
-        decoded_2(a) = -1;
+        decoded_2(a) = 1;
     else
-       decoded_2(a) = 1;
+       decoded_2(a) = -1;
     end
 end
 
-% decoded_2(length(decoded_2)/2:end) = -1 .* decoded_2(length(decoded_2)/2:end);
-
-% Decode channel 3, Should not be flipped
+% Decode channel 3
 decoded_3 = zeros(1, N);
 a = 0;
 pulselen = length(pulse_sinc_time);
@@ -219,12 +220,3 @@ stem(decoded_3, 'r', 'x', 'LineWidth', 1)
 title('Channel 3'), legend('Transmitted Signal', 'Recieved Signal','location', 'east')
 sgtitle('Decoded Message Accuracy for all Three Chanels')
 hold off
-
-
-% figure, hold on
-% plot(f,abs((band1_down)),'r')
-% plot(f,abs((band2_down)),'m')
-% plot(f,abs((band3_down)),'b')
-% xlabel('Index'),ylabel('Amplitude'),title('Merged Down-Converted Channels - Sinc Pulse Shape')
-% legend('20Hz Band','30Hz Band','40Hz Band')
-% hold off
