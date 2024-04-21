@@ -21,7 +21,7 @@ t = -Ts:dt:Ts;
 % pulse_square_freq(1,round(3/4*length(pulse_square_freq)):end) = -1;
 
 numsymbols = 2;
-pulse_rcos_time = rcosdesign(0.2,numsymbols,((length(t)-1)/numsymbols), 'sqrt');
+pulse_rcos_time = rcosdesign(0.2,numsymbols,((length(t)-1)/numsymbols), 'normal');
 
 pulse_sinc_time = sinc((2*t)/Ts);
 
@@ -123,45 +123,102 @@ upconverted_sinc = band1_up + band2_up + band3_up;
 
 % DOWNCONVERTING
 band1_down = upconverted_sinc .* sin(2*pi*frequencies(1)*t_recieved);
-band1_down = lowpass(band1_down, 6, sample_freq);
+%band1_down = lowpass(band1_down, 6, sample_freq);
+band1_down = conv(band1_down, pulse_sinc_time);
 band1_down_fft = fft(band1_down);
 
 band2_down = upconverted_sinc .* sin(2*pi*frequencies(2)*t_recieved);
 band2_down = lowpass(band2_down, 6, sample_freq);
+%band2_down = conv(band2_down, pulse_sinc_time);
 band2_down_fft = fft(band2_down);
 
 band3_down = upconverted_sinc .* sin(2*pi*frequencies(3)*t_recieved);
-band3_down = lowpass(band3_down, 6, sample_freq);
+%band3_down = lowpass(band3_down, 6, sample_freq);
+band3_down = conv(band3_down, pulse_sinc_time);
 band3_down_fft = fft(band3_down);
 
 
 figure, hold on
-subplot(3,1,1),plot(f,abs(fft(band1_down)))
+subplot(3,1,1),plot(real(band1_down_fft))
 xlabel('Index'),ylabel('Amplitude'),title('Band 1, 20Hz')
-subplot(3,1,2),plot(f,abs(fft(band2_down)))
+subplot(3,1,2),plot(real(band2_down_fft))
 xlabel('Index'),ylabel('Amplitude'),title('Band 2, 30Hz')
-subplot(3,1,3),plot(f,abs(fft(band3_down)))
+subplot(3,1,3),plot(real(band3_down_fft))
 xlabel('Index'),ylabel('Amplitude'),title('Band 3, 40 Hz')
 sgtitle('Three Downconverted bands - Sinc Pulse Shape')
 hold off
 
-% Decode :3
-decoded = zeros(1, N);
+% Decode-              --- --- - - - - - -- - -- 
+% Because multiplication with the sine causes a negative and positive
+% duplicate on the left hand side and right hand side of the x-axis
+% respectively, the pulse that is being decoded(the left hand pulse) is
+% inverted and therefore the decoding must be inverted as well to produce
+% the correct output.
 
+% Decode channnel 1
+decoded_1 = zeros(1, N);
 a = 0;
 pulselen = length(pulse_sinc_time);
 filterlen = length(band1_down);
-
 factor = 1/(bit_rate * Tp); % find factor relating Ts and Tp, use that to modify pulselen
-
 for i = pulselen + 1:(pulselen * factor + mod(factor, 2))/2:filterlen-pulselen * factor - 1
     a = a + 1;
     if(band1_down(i) > 0)
-        decoded(a) = 1;
+        decoded_1(a) = -1;
     else
-       decoded(a) = -1;
+       decoded_1(a) = 1;
     end
 end
+% Decode channel 2, Should be flipped
+decoded_2 = zeros(1, N);
+a = 0;
+pulselen = length(pulse_sinc_time);
+filterlen = length(band2_down);
+factor = 1/(bit_rate * Tp); % find factor relating Ts and Tp, use that to modify pulselen
+for i = pulselen + 1:(pulselen * factor + mod(factor, 2))/2:filterlen-pulselen * factor - 1
+    a = a + 1;
+    if(band2_down(i) > 0)
+        decoded_2(a) = -1;
+    else
+       decoded_2(a) = 1;
+    end
+end
+
+% decoded_2(length(decoded_2)/2:end) = -1 .* decoded_2(length(decoded_2)/2:end);
+
+% Decode channel 3, Should not be flipped
+decoded_3 = zeros(1, N);
+a = 0;
+pulselen = length(pulse_sinc_time);
+filterlen = length(band3_down);
+factor = 1/(bit_rate * Tp); % find factor relating Ts and Tp, use that to modify pulselen
+for i = pulselen + 1:(pulselen * factor + mod(factor, 2))/2:filterlen-pulselen * factor - 1
+    a = a + 1;
+    if(band3_down(i) > 0)
+        decoded_3(a) = 1;
+    else
+       decoded_3(a) = -1;
+    end
+end
+
+%Plot all 3 channels
+figure
+subplot(3,1,1), hold on
+stem(xn, 'b', 'o', 'LineWidth', 1.5)
+stem(decoded_1, 'r', 'x','LineWidth', 1)
+hold off, title('Channel 1'), legend('Transmitted Signal', 'Recieved Signal','location', 'east')
+
+subplot(3,1,2), hold on
+stem(xn, 'b', 'o','LineWidth', 1.5)
+stem(decoded_2, 'r', 'x','LineWidth', 1)
+hold off, title('Channel 2'), legend('Transmitted Signal', 'Recieved Signal','location', 'east')
+
+subplot(3,1,3),  hold on
+stem(xn, 'b', 'o','LineWidth', 1.5)
+stem(decoded_3, 'r', 'x', 'LineWidth', 1)
+title('Channel 3'), legend('Transmitted Signal', 'Recieved Signal','location', 'east')
+sgtitle('Decoded Message Accuracy for all Three Chanels')
+hold off
 
 
 % figure, hold on
