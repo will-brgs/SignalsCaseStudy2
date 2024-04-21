@@ -163,6 +163,7 @@ for i = pulselen + 1:(pulselen * factor + mod(factor, 2))/2:filterlen-pulselen *
     end
 end
 
+
 % figure, hold on
 % plot(f,abs((band1_down)),'r')
 % plot(f,abs((band2_down)),'m')
