@@ -148,7 +148,7 @@ xlabel('Index'),ylabel('Amplitude'),title('Band 3, 40 Hz')
 sgtitle('Three Downconverted bands - Sinc Pulse Shape')
 hold off
 
-% Decode-              --- --- - - - - - -- - -- 
+% Decode
 % Because multiplication with the sine causes a negative and positive
 % duplicate on the left hand side and right hand side of the x-axis
 % respectively, the pulse that is being decoded(the left hand pulse) is
