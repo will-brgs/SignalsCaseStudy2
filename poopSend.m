@@ -10,7 +10,7 @@ bit_period = 1/bit_rate; % Ts, Time between bits sent out
 
 pulse = pulse_shape;
 
-N = 20;
+N = length(binary);
 
 %maxTime = N * bit_period;
 
@@ -47,12 +47,11 @@ for i = pulselen + 1:(pulselen * factor + mod(factor, 2))/2:filterlen-pulselen *
     if(filtered(i) > 0)
         decoded(a) = 1;
     else
-       decoded(a) = -1;
+       decoded(a) = 0;
     end
 end
 
-messageOut = char(bin2dec(num2str(reshape(binary,7,[])')))';
+messageOut = char(bin2dec(num2str(reshape(decoded,7,[])')))';
 disp(["Original message: ", message])
 disp(["Decoded message: ", messageOut])
-disp(messageOut)
 SNR = (sum(y.^2))/(sum(noise.^2));
