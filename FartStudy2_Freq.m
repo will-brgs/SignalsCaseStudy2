@@ -220,3 +220,6 @@ stem(decoded_3, 'x', 'LineWidth', 1)
 title('Channel 3'), legend('Transmitted Signal', 'Recieved Signal','location', 'east')
 sgtitle('Decoded Message Accuracy for all Three Chanels')
 hold off
+
+%% poopSending Test
+[~, ~, messageOut, ~] = poopSend(pulse_sinc_time, 0, 'Abcde');
