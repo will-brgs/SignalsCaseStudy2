@@ -46,15 +46,20 @@ hold off
 
 frequencies = [20,30,40];
 simlength = 100;
+internal_avg_length = 10;
 sigma = zeros(simlength,1);
 SNR = zeros(simlength,1);
 error_avg = zeros(simlength,1);
 for i = 1:simlength
+internal_avg = zeros(internal_avg_length,1);
+for j = 1:internal_avg_length
 sigma(i) = 0.5 + (0.05 * i);
 [SNR(i),error_1,error_2,error_3] = ComSys(pulse_sinc_time,frequencies,sigma(i));
 
 % Calculate average error for each simulation in percent
-error_avg(i) = (error_1 + error_2 + error_3)/3;
+internal_avg(j) = (error_1 + error_2 + error_3)/3;
+end
+error_avg(i) = sum(internal_avg) / length(internal_avg);
 end
 % p = polyfit(SNR, error_avg, 10);
 % xfit = min(SNR):0.1:max(SNR);
@@ -66,40 +71,47 @@ yfit = model(parameters, xfit);
 
 figure, hold on
 scatter(SNR,error_avg, 'filled'), xlabel('SNR'),ylabel('Average Error Rate (%)')
+grid on
 plot((xfit),yfit, 'r', 'linewidth', 2)
 title('Simulation of Various Sigma Values on Three Channels')
 legend('Simulation Datapoints', 'Regression Line')
-hold off
+hold off, grid off
 
 %% Run Communication System For Different Channel Bandwidth Values - Sinc Pulse Shape
 
 frequency_ratios = [2,3,4];
 simlength = 100;
-sigma = 1;
+sigma = 0.5;
+internal_avg_length = 10;
 bandwidth = zeros(simlength,1);
 frequencies = zeros(length(frequency_ratios));
 error_avg = zeros(simlength,1);
 
 for i = 1:simlength
+internal_avg = zeros(internal_avg_length,1);
+for j = 1:internal_avg_length
 frequencies = frequency_ratios .* (100 - (0.95 * i));
 bandwidth(i) = frequencies(2) - frequencies(1);
 
 [~,error_1,error_2,error_3] = ComSys(pulse_sinc_time,frequencies,sigma);
 
-% Calculate average error for each simulation in percent
-error_avg(i) = (error_1 + error_2 + error_3)/3;
+internal_avg(j) = (error_1 + error_2 + error_3)/3;
 end
-% p = polyfit(SNR, error_avg, 10);
-% xfit = min(SNR):0.1:max(SNR);
-model = @(b, SNR) b(1) * exp(b(2) * SNR);
-initial_guess = [1, 0.1];
-parameters = lsqcurvefit(model, initial_guess, bandwidth, error_avg);
-xfit = linspace(min(bandwidth), max(bandwidth), 100);
-yfit = model(parameters, xfit);
+% Calculate average error for each simulation in percent
+error_avg(i) = sum(internal_avg) / length(internal_avg);
+end
+%  p = polyfit(bandwidth, error_avg, 10);
+%  xfit = min(bandwidth):0.1:max(bandwidth);
+% model = @(b, SNR) b(1) * exp(b(2) * SNR);
+% initial_guess = [1, 0.1];
+% parameters = lsqcurvefit(model, initial_guess, bandwidth, error_avg);
+% xfit = linspace(min(bandwidth), max(bandwidth), 100);
+% yfit = model(parameters, xfit);
 
 figure, hold on
 scatter(bandwidth,error_avg, 'filled'), xlabel('Bandwidth (Hz)'),ylabel('Average Error Rate (%)')
-plot((xfit),yfit, 'r', 'linewidth', 2)
+grid on
+%plot((xfit),yfit, 'r', 'linewidth', 2)
 title('Simulation of Various Sigma Values on Three Channels')
-legend('Simulation Datapoints', 'Regression Line')
-hold off
+%legend('Simulation Datapoints', 'Regression Line')
+hold off, grid off
