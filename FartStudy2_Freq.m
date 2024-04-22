@@ -205,18 +205,18 @@ end
 %Plot all 3 channels
 figure
 subplot(3,1,1), hold on
-stem(xn, 'b', 'o', 'LineWidth', 1.5)
-stem(decoded_1, 'r', 'x','LineWidth', 1)
+stem(xn, 'o', 'LineWidth', 1.5)
+stem(decoded_1, 'x','LineWidth', 1)
 hold off, title('Channel 1'), legend('Transmitted Signal', 'Recieved Signal','location', 'east')
 
 subplot(3,1,2), hold on
-stem(xn, 'b', 'o','LineWidth', 1.5)
-stem(decoded_2, 'r', 'x','LineWidth', 1)
+stem(xn, 'o','LineWidth', 1.5)
+stem(decoded_2, 'x','LineWidth', 1)
 hold off, title('Channel 2'), legend('Transmitted Signal', 'Recieved Signal','location', 'east')
 
 subplot(3,1,3),  hold on
-stem(xn, 'b', 'o','LineWidth', 1.5)
-stem(decoded_3, 'r', 'x', 'LineWidth', 1)
+stem(xn, 'o','LineWidth', 1.5)
+stem(decoded_3, 'x', 'LineWidth', 1)
 title('Channel 3'), legend('Transmitted Signal', 'Recieved Signal','location', 'east')
 sgtitle('Decoded Message Accuracy for all Three Chanels')
 hold off
