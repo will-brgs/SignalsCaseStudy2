@@ -24,7 +24,6 @@ pulse_rcos_time = rcosdesign(0.01,numsymbols,((length(t)-1)/numsymbols), 'normal
 
 pulse_sinc_time = sinc((2*t)/Ts);
 
-
 pulse_rcos_freq = fftshift(fft(pulse_rcos_time));
 pulse_sinc_freq = fftshift(fft(pulse_sinc_time));
 
@@ -78,7 +77,6 @@ legend('Simulation Datapoints', 'Regression Line')
 hold off, grid off
 
 %% Run Communication System For Different Channel Bandwidth Values - Sinc Pulse Shape
-
 frequency_ratios = [2,3,4];
 simlength = 100;
 sigma = 0.5;
@@ -100,18 +98,53 @@ end
 % Calculate average error for each simulation in percent
 error_avg(i) = sum(internal_avg) / length(internal_avg);
 end
-%  p = polyfit(bandwidth, error_avg, 10);
-%  xfit = min(bandwidth):0.1:max(bandwidth);
-% model = @(b, SNR) b(1) * exp(b(2) * SNR);
-% initial_guess = [1, 0.1];
-% parameters = lsqcurvefit(model, initial_guess, bandwidth, error_avg);
-% xfit = linspace(min(bandwidth), max(bandwidth), 100);
-% yfit = model(parameters, xfit);
+%generate regression line
+p = polyfit(bandwidth, error_avg, 4);
+xfit = min(bandwidth):0.1:max(bandwidth);
+yfit = polyval(p, xfit);
 
 figure, hold on
 scatter(bandwidth,error_avg, 'filled'), xlabel('Bandwidth (Hz)'),ylabel('Average Error Rate (%)')
 grid on
-%plot((xfit),yfit, 'r', 'linewidth', 2)
-title('Simulation of Various Sigma Values on Three Channels')
-%legend('Simulation Datapoints', 'Regression Line')
+plot((xfit),yfit, 'r', 'linewidth', 2)
+title('Simulation of Various Bandwidth Values on Three Channels')
+legend('Simulation Datapoints', 'Regression Line')
+hold off, grid off
+
+%% Run Communication System For Different Temporal Pulse Durrations- Sinc Pulse Shape
+frequencies = [20,30,40];
+simlength = 100;
+sigma = 0.5;
+internal_avg_length = 10;
+error_avg = zeros(simlength,1);
+Ts_vals = zeros(simlength,1);
+
+for i = 1:simlength
+internal_avg = zeros(internal_avg_length,1);
+%  Generate new pulse shape with new Ts
+
+Ts = 0.1 + (i * 5e-3);
+Ts_vals(i) = Ts;
+pulse_sinc_time_Ts = sinc((2*t)/Ts);
+for j = 1:internal_avg_length
+
+[~,error_1,error_2,error_3] = ComSys(pulse_sinc_time_Ts,frequencies,sigma);
+
+internal_avg(j) = (error_1 + error_2 + error_3)/3;
+end
+% Calculate average error for each simulation in percent
+error_avg(i) = sum(internal_avg) / length(internal_avg);
+end
+
+%generate regression line
+p = polyfit(Ts_vals, error_avg, 5);
+xfit = min(Ts_vals):0.1:max(Ts_vals);
+yfit = polyval(p, xfit);
+
+figure, hold on
+scatter(Ts_vals,error_avg, 'filled'), xlabel('Ts (s)'),ylabel('Average Error Rate (%)')
+grid on
+plot((xfit),yfit, 'r', 'linewidth', 2)
+title('Simulation of Various Half-Pulse Temporal Widths on Three Channels')
+legend('Simulation Datapoints', 'Regression Line')
 hold off, grid off
