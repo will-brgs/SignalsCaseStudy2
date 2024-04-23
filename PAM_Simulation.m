@@ -136,7 +136,7 @@ error_avg(i) = sum(internal_avg) / length(internal_avg);
 end
 
 %generate regression line
-p = polyfit(Ts_vals, error_avg, 5);
+p = polyfit(Ts_vals, error_avg, 7);
 xfit = linspace(min(Ts_vals),max(Ts_vals),simlength);
 yfit = polyval(p, xfit);
 
