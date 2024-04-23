@@ -38,7 +38,6 @@ xlabel('Time'),ylabel('Amplitude'),title('Sinc Pulse in Time Domain')
 subplot(2,2,4), plot(t,abs(pulse_sinc_freq), 'r')
 xlabel('Frequency'),ylabel('Amplitude'),title('Sinc Pulse in Frequency Domain')
 
-
 sgtitle('Pulse Shapes Utilized')
 hold off
 %% Run Communication System For Different Sigma Values - Sinc Pulse Shape
@@ -52,7 +51,7 @@ error_avg = zeros(simlength,1);
 for i = 1:simlength
 internal_avg = zeros(internal_avg_length,1);
 for j = 1:internal_avg_length
-sigma(i) = 0.5 + (0.05 * i);
+sigma(i) = 0.5 + (0.04 * i);
 [SNR(i),error_1,error_2,error_3] = ComSys(pulse_sinc_time,frequencies,sigma(i));
 
 % Calculate average error for each simulation in percent
@@ -60,8 +59,8 @@ internal_avg(j) = (error_1 + error_2 + error_3)/3;
 end
 error_avg(i) = sum(internal_avg) / length(internal_avg);
 end
-% p = polyfit(SNR, error_avg, 10);
-% xfit = min(SNR):0.1:max(SNR);
+
+%generate regression line
 model = @(b, SNR) b(1) * exp(b(2) * SNR);
 initial_guess = [1, 0.1];
 parameters = lsqcurvefit(model, initial_guess, SNR, error_avg);
@@ -138,7 +137,7 @@ end
 
 %generate regression line
 p = polyfit(Ts_vals, error_avg, 5);
-xfit = min(Ts_vals):0.1:max(Ts_vals);
+xfit = linspace(min(Ts_vals),max(Ts_vals),simlength);
 yfit = polyval(p, xfit);
 
 figure, hold on
@@ -146,5 +145,5 @@ scatter(Ts_vals,error_avg, 'filled'), xlabel('Ts (s)'),ylabel('Average Error Rat
 grid on
 plot((xfit),yfit, 'r', 'linewidth', 2)
 title('Simulation of Various Half-Pulse Temporal Widths on Three Channels')
-legend('Simulation Datapoints', 'Regression Line')
+legend('Simulation Datapoints', 'Regression Line', 'location', 'southeast')
 hold off, grid off
