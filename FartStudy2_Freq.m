@@ -244,6 +244,7 @@ pulse = pulse_shape;
 N = length(binary);
 
 %maxTime = N * bit_period;
+binary(binary == 0) = -1
 
 a = 0;
 imp_train = zeros(1,N * bit_period * sample_freq);
