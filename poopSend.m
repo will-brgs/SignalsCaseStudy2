@@ -43,7 +43,7 @@ filterlen = length(filtered);
 factor = 1/(bit_rate * Tp); % find factor relating Ts and Tp, use that to modify pulselen
 % please name this something other than factor
 
-for i = pulselen + 1:(pulselen * factor + mod(factor, 2))/2:filterlen-pulselen * factor - 1
+for i = pulselen + 1:(pulselen * factor + mod(factor, 2))/2-1:filterlen-pulselen * factor - 1
     a = a + 1;
     if(filtered(i) > 0)
         decoded(a) = 1;
