@@ -1,4 +1,4 @@
-function [SNR,error_1,error_2,error_3] = ComSys(pulse_shape_time, frequencies, sigma)
+function [SNR,error_1,error_2,error_3] = ComSys(pulse_shape_time, frequencies, sigma, N)
 % Function Takes input arguments of factors we wish to analize for
 % performance analysis.
 %   Detailed explanation goes here
@@ -9,9 +9,8 @@ dt = sample_period;
 bit_rate = 1/(1 * Tp); %Fb, frequency of bits sent out
 bit_period = 1/bit_rate; % Ts, Time between bits sent out
 Ts = bit_period;
-N = 20; % number of bits sent
 
-[r, y,xn, ~, SNR] = poopFunc(pulse_shape_time, sigma);
+[r, y,xn, ~, SNR] = poopFunc(pulse_shape_time, sigma,N);
 
 t_recieved = -Tp:dt:N * Ts + Tp -dt;
 

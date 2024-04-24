@@ -13,7 +13,7 @@ pulse = pulse_shape;
 
 xn = 2 * ((rand(1, N) > 0.5) - 0.5);
 a = 0;
-imp_train = zeros(1,N * bit_period * sample_freq);
+imp_train = zeros(1,round(N * bit_period * sample_freq));
 for k = 1:length(imp_train)
     if mod(k - 1, sample_freq * bit_period) == 0
     a = a + 1;

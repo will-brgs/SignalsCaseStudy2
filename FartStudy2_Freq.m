@@ -222,5 +222,5 @@ sgtitle('Decoded Message Accuracy for all Three Chanels')
 hold off
 
 %% poopSending Test
-[~, ~, messageOut, ~] = poopSend(pulse_sinc_time, 0, 'Abcde');
-
+[~, ~, messageOut, ~] = poopSend(pulse_sinc_time, 0, 'Will will wash your car!');
+%168 bit message
