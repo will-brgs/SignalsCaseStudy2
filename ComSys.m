@@ -38,7 +38,7 @@ a = 0;
 pulselen = length(pulse_shape_time);
 filterlen = length(band1_down);
 factor = 1/(bit_rate * Tp); % find factor relating Ts and Tp, use that to modify pulselen
-for i = pulselen + 1:(pulselen * factor + mod(factor, 2))/2:filterlen-pulselen * factor - 1
+for i = pulselen + 1:(pulselen * factor + mod(factor, 2))/2-1:filterlen-pulselen * factor - 1
     a = a + 1;
     if(band1_down(i) > 0)
         decoded_1(a) = 1;
@@ -55,7 +55,7 @@ a = 0;
 pulselen = length(pulse_shape_time);
 filterlen = length(band2_down);
 factor = 1/(bit_rate * Tp); % find factor relating Ts and Tp, use that to modify pulselen
-for i = pulselen + 1:(pulselen * factor + mod(factor, 2))/2:filterlen-pulselen * factor - 1
+for i = pulselen + 1:(pulselen * factor + mod(factor, 2))/2-1:filterlen-pulselen * factor - 1
     a = a + 1;
     if(band2_down(i) > 0)
         decoded_2(a) = 1;
@@ -71,7 +71,7 @@ a = 0;
 pulselen = length(pulse_shape_time);
 filterlen = length(band3_down);
 factor = 1/(bit_rate * Tp); % find factor relating Ts and Tp, use that to modify pulselen
-for i = pulselen + 1:(pulselen * factor + mod(factor, 2))/2:filterlen-pulselen * factor - 1
+for i = pulselen + 1:(pulselen * factor + mod(factor, 2))/2-1:filterlen-pulselen * factor - 1
     a = a + 1;
     if(band3_down(i) > 0)
         decoded_3(a) = 1;

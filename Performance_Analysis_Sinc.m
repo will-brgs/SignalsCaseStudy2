@@ -150,80 +150,43 @@ plot((xfit),yfit, 'r', 'linewidth', 2)
 title('Simulation of Various Half-Pulse Temporal Widths on Three Channels')
 legend('Simulation Datapoints', 'Regression Line', 'location', 'southeast')
 hold off, grid off
-%% Run Communication System For Different Bit Sent Values - Sinc Pulse Shape
-frequencies = [20,30,40];
-simlength = 100;
-sigma = 0.5;
-internal_avg_length = 10;
-error_avg = zeros(simlength,1);
-Ts = 10;
 
-N_vals = zeros(simlength,1);
 
-for i = 1:simlength
-internal_avg = zeros(internal_avg_length,1);
-%  Generate new pulse shape with new Ts
-
-N = 10 + (i);
-N_vals(i) = N;
-for j = 1:internal_avg_length
-
-[~,error_1,error_2,error_3] = ComSys(pulse_sinc_time,frequencies,sigma,N);
-
-internal_avg(j) = (error_1 + error_2 + error_3)/3;
-end
-% Calculate average error for each simulation in percent
-error_avg(i) = sum(internal_avg) / length(internal_avg);
-end
-
-%generate regression line
-p = polyfit(N_vals, error_avg, 6);
-xfit = linspace(min(N_vals),max(N_vals),simlength);
-yfit = polyval(p, xfit);
-
-figure, hold on
-scatter(N_vals,error_avg, 'filled'), xlabel('Number of Bits Transmitted'),ylabel('Average Error Rate (%)')
-grid on
-plot((xfit),yfit, 'r', 'linewidth', 2)
-title('Simulation of Various Numbers of Bits Transmitted Over Three Channels')
-legend('Simulation Datapoints', 'Regression Line', 'location', 'southeast')
-hold off, grid off
-
-%% Run Communication System For Different Bit Sent Values - Sinc Pulse Shape
-frequencies = [20,30,40];
-simlength = 100;
-sigma = 0.5;
-internal_avg_length = 10;
-error_avg = zeros(simlength,1);
-Ts = 10;
-
-N_vals = zeros(simlength,1);
-
-for i = 1:simlength
-internal_avg = zeros(internal_avg_length,1);
-%  Generate new pulse shape with new Ts
-
-N = 10 + (i);
-N_vals(i) = N;
-for j = 1:internal_avg_length
-
-[~,error_1,error_2,error_3] = ComSys(pulse_sinc_time,frequencies,sigma,N);
-
-internal_avg(j) = (error_1 + error_2 + error_3)/3;
-end
-% Calculate average error for each simulation in percent
-error_avg(i) = sum(internal_avg) / length(internal_avg);
-end
-
-%generate regression line
-p = polyfit(N_vals, error_avg, 6);
-xfit = linspace(min(N_vals),max(N_vals),simlength);
-yfit = polyval(p, xfit);
-
-figure, hold on
-scatter(N_vals,error_avg, 'filled'), xlabel('Number of Bits Transmitted'),ylabel('Average Error Rate (%)')
-grid on
-plot((xfit),yfit, 'r', 'linewidth', 2)
-title('Simulation of Various Numbers of Bits Transmitted Over Three Channels')
-legend('Simulation Datapoints', 'Regression Line', 'location', 'southeast')
-hold off, grid off
+% %% Run Communication System For Different Bit Sent Values - Sinc Pulse Shape
+% frequencies = [20,30,40];
+% simlength = 100;
+% sigma = 0.5;
+% internal_avg_length = 10;
+% error_avg = zeros(simlength,1);
+% Ts = 10;
+% 
+% N_vals = zeros(simlength,1);
+% 
+% for i = 1:simlength
+% internal_avg = zeros(internal_avg_length,1);
+% %  Generate new pulse shape with new Ts
+% 
+% N = 10 + (i);
+% N_vals(i) = N;
+% for j = 1:internal_avg_length
+% 
+% [~,error_1,error_2,error_3] = ComSys(pulse_sinc_time,frequencies,sigma,N);
+% 
+% internal_avg(j) = (error_1 + error_2 + error_3)/3;
+% end
+% % Calculate average error for each simulation in percent
+% error_avg(i) = sum(internal_avg) / length(internal_avg);
+% end
+% 
+% %generate regression line
+% p = polyfit(N_vals, error_avg, 6);
+% xfit = linspace(min(N_vals),max(N_vals),simlength);
+% yfit = polyval(p, xfit);
+% 
+% figure, hold on
+% scatter(N_vals,error_avg, 'filled'), xlabel('Number of Bits Transmitted'),ylabel('Average Error Rate (%)')
+% grid on
+% plot((xfit),yfit, 'r', 'linewidth', 2)
+% title('Simulation of Various Numbers of Bits Transmitted Over Three Channels')
+% legend('Simulation Datapoints', 'Regression Line', 'location', 'southeast')
+% hold off, grid off
