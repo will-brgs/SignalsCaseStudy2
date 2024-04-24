@@ -44,7 +44,7 @@ xlabel('Frequency'),ylabel('Amplitude'),title('Sinc Pulse in Frequency Domain')
 sgtitle('Pulse Shapes Utilized')
 hold off
 %% Use Function on Raised Cosine Pulse Shape
-[~,~,xn, decoded, SNR] = poopFunc(abs(pulse_rcos_time), sigma);
+[~,~,xn, decoded, SNR] = poopFunc(abs(pulse_rcos_time), sigma, N);
 
 figure, hold on
 subplot(2,2,1),stem(xn,'b','filled')
@@ -62,7 +62,7 @@ disp(['Standard Deviation: ' , num2str(sigma)])
 disp(['SNR: ' , num2str(SNR)])
 disp(['Error: ' ,num2str(error*100),' percent'])
 %% Use Function on Sinc Pulse
-[~,~, xn, decoded, SNR] = poopFunc(abs(pulse_sinc_time), sigma);
+[~,~, xn, decoded, SNR] = poopFunc(abs(pulse_sinc_time), sigma, N);
 
 subplot(2,2,3),stem(xn,'b','filled')
 xlabel('Index'),ylabel('Amplitude'),title('Transmitted - Sinc Pulse')
@@ -83,7 +83,7 @@ disp(['Error: ' ,num2str(error*100),' percent'])
 
 %% Up/down convert with 3 channel system - Sinc Pulse Shape
 frequencies = [20,30,40];
-[r,y, xn, ~, ~] = poopFunc(abs(pulse_sinc_time), sigma);
+[r,y, xn, ~, ~] = poopFunc(abs(pulse_sinc_time), sigma, N);
 
 t_recieved = -Tp:dt:N * Ts + Tp -dt;
 

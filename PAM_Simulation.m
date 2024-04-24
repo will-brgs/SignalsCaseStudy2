@@ -10,7 +10,7 @@ sample_freq = 1/sample_period; % Frequency of pulse and recieve signal
 bit_rate = 1/(1 * Tp); %Fb, frequency of bits sent out
 bit_period = 1/bit_rate; % Ts, Time between bits sent out
 Ts = bit_period;
-N = 20; % number of bits sent
+N = 1; % number of bits sent
 %% Define Pulse Shapes
 %w = linspace(-5, 5, (2*Ts)/dt+1); % frequency vector
 t = -Ts:dt:Ts;

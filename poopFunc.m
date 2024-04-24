@@ -1,5 +1,5 @@
 
-function [r,y, xn,  decoded, SNR] = poopFunc(pulse_shape, sigma)
+function [r,y, xn,  decoded, SNR] = poopFunc(pulse_shape, sigma, N)
 Tp = 0.1; % Half pulse width
 sample_period = Tp/40; % dt, pulse and recieve sample period
 sample_freq = 1/sample_period; % Frequency of pulse and recieve signal 
@@ -8,8 +8,6 @@ bit_rate = 1/(1 * Tp); %Fb, frequency of bits sent out
 bit_period = 1/bit_rate; % Ts, Time between bits sent out
 
 pulse = pulse_shape;
-
-N = 20;
 
 %maxTime = N * bit_period;
 
