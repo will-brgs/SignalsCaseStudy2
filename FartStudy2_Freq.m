@@ -222,7 +222,5 @@ sgtitle('Decoded Message Accuracy for all Three Chanels')
 hold off
 
 %% poopSending Test
-% [~, ~, messageOut, ~] = poopSend(pulse_sinc_time, 0, 'Abcde');
-% binary = str2num(reshape(dec2bin('Abcde')',1,[])');
-% 
+[~, ~, messageOut, ~] = poopSend(pulse_sinc_time, 0, 'Abcde');
 

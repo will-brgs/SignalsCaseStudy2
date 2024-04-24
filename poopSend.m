@@ -1,7 +1,4 @@
-% function [r,y, messageOut, SNR] = poopSend(pulse_shape, sigma, message)
-pulse_shape = pulse_sinc_time;
-sigma = 0;
-message = 'I love ESE351';
+function [r,y, messageOut, SNR] = poopSend(pulse_shape, sigma, message)
 binary = str2num(reshape(dec2bin(message)',1,[])');
 
 Tp = 0.1; % Half pulse width
