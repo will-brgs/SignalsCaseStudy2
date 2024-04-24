@@ -229,7 +229,7 @@ hold off
 % function [r,y, messageOut, SNR] = poopSend(pulse_shape, sigma, message)
 pulse_shape = pulse_sinc_time;
 sigma = 0;
-message = 'Abcde';
+message = 'I love ESE351';
 binary = str2num(reshape(dec2bin(message)',1,[])');
 
 Tp = 0.1; % Half pulse width
@@ -244,7 +244,7 @@ pulse = pulse_shape;
 N = length(binary);
 
 %maxTime = N * bit_period;
-binary(binary == 0) = -1
+binary(binary == 0) = -1;
 
 a = 0;
 imp_train = zeros(1,N * bit_period * sample_freq);
