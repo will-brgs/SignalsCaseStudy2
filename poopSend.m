@@ -1,4 +1,7 @@
-function [r,y, messageOut, SNR] = poopSend(pulse_shape, sigma, message)
+% function [r,y, messageOut, SNR] = poopSend(pulse_shape, sigma, message)
+pulse_shape = pulse_sinc_time;
+sigma = 0;
+message = 'I love ESE351';
 binary = str2num(reshape(dec2bin(message)',1,[])');
 
 Tp = 0.1; % Half pulse width
@@ -13,6 +16,7 @@ pulse = pulse_shape;
 N = length(binary);
 
 %maxTime = N * bit_period;
+binary(binary == 0) = -1;
 
 a = 0;
 imp_train = zeros(1,N * bit_period * sample_freq);
@@ -43,7 +47,6 @@ factor = 1/(bit_rate * Tp); % find factor relating Ts and Tp, use that to modify
 % please name this something other than factor
 
 for i = pulselen + 1:(pulselen * factor + mod(factor, 2))/2:filterlen-pulselen * factor - 1
-    disp(i)
     a = a + 1;
     if(filtered(i) > 0)
         decoded(a) = 1;
