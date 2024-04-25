@@ -1,5 +1,8 @@
-
 function [r,y, xn,  decoded, SNR] = poopFunc(pulse_shape, sigma, N)
+% Poopfunc acts as a simulation for generating a message signal, performing
+% convolution with the input pulse shape, adding noise, then recieving and
+% decoding the system. Returns releveant metrics for PAM simulation
+
 Tp = 0.1; % Half pulse width
 sample_period = Tp/40; % dt, pulse and recieve sample period
 sample_freq = 1/sample_period; % Frequency of pulse and recieve signal 

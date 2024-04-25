@@ -1,6 +1,19 @@
+%% Signals and Systems Case Study 2:
+%% Introduction
+
+% * Author:                   Mack LaRosa, Will Burgess, Leela Srinivas
+% * Class:                    ESE 351
+% * Date:                     Created 4/12/2024, Last Edited 4/28/2024
+
+% main functional code block for case study. Includes design and up/down
+% conversion for main objectives. Utilized poopfunc. Many functions of this
+% file are then converted into ComSys for streamlined perforamnce analysis.
+% Note that up/downscaling is not tested with the raised cosine pulse
+% shape. Analysis of this shape is done with Performance_analysis_Rcos
 %% Housekeeping
 clear
 close all
+filepath = "C:\Users\Will\OneDrive - Washington University in St. Louis\. Signals & Systems\Case Study 2\Figures";
 %% Generate Input Signal and Add Noise Factor, Bitrate = 1/Tp
 Tp = 0.1; % Half pulse width
 sample_period = Tp/40; % dt, pulse and recieve sample period
@@ -15,7 +28,7 @@ sigma = 1;
 %% Define Pulse Shapes
 %w = linspace(-5, 5, (2*Ts)/dt+1); % frequency vector
 t = -Ts:dt:Ts;
-
+w = t.*1/dt;
 % pulse_square_freq = ones(1,length(w));
 % pulse_square_freq(1,1:round(1/4*length(pulse_square_freq))) = -1;
 % pulse_square_freq(1,round(3/4*length(pulse_square_freq)):end) = -1;
@@ -29,16 +42,17 @@ pulse_sinc_time = sinc((2*t)/Ts);
 pulse_rcos_freq = fftshift(fft(pulse_rcos_time));
 pulse_sinc_freq = fftshift(fft(pulse_sinc_time));
 
-figure, hold on
+fig1 = figure();
+hold on
 subplot(2,2,1), stem(t,(pulse_rcos_time), 'b')
-xlabel('Time'),ylabel('Amplitude'),title('Raised Cos Pulse in Time Domain')
-subplot(2,2,2), plot(t,abs(pulse_rcos_freq),'r')
-xlabel('Frequency'),ylabel('Amplitude'),title('Raised Cosine Pulse in Frequency Domain')
+xlabel('Time (s)'),ylabel('Amplitude'),title('Raised Cos Pulse in Time Domain')
+subplot(2,2,2), plot(w,abs(pulse_rcos_freq),'r')
+xlabel('Frequency (Hz)'),ylabel('Amplitude'),title('Raised Cosine Pulse in Frequency Domain')
 
 subplot(2,2,3), stem(t,(pulse_sinc_time), 'b')
-xlabel('Time'),ylabel('Amplitude'),title('Sinc Pulse in Time Domain')
-subplot(2,2,4), plot(t,abs(pulse_sinc_freq), 'r')
-xlabel('Frequency'),ylabel('Amplitude'),title('Sinc Pulse in Frequency Domain')
+xlabel('Time (s)'),ylabel('Amplitude'),title('Sinc Pulse in Time Domain')
+subplot(2,2,4), plot(w,abs(pulse_sinc_freq), 'r')
+xlabel('Frequency (Hz)'),ylabel('Amplitude'),title('Sinc Pulse in Frequency Domain')
 
 
 sgtitle('Pulse Shapes Utilized')
@@ -46,11 +60,12 @@ hold off
 %% Use Function on Raised Cosine Pulse Shape
 [~,~,xn, decoded, SNR] = poopFunc(abs(pulse_rcos_time), sigma, N);
 
-figure, hold on
+fig2 = figure(); 
+hold on
 subplot(2,2,1),stem(xn,'b','filled')
-xlabel('Index'),ylabel('Amplitude'),title('Transmitted - RCos Pulse')
+xlabel('Index'),xlabel('Bit Index'), ylabel('Logic State')
 subplot(2,2,2),stem(decoded, 'r','filled')
-xlabel('Index'),ylabel('Amplitude'),title('Decoded - RCos Pulse')
+xlabel('Index'),xlabel('Bit Index'), ylabel('Logic State')
 sgtitle('System Using Sinc Pulse')
 
 % display performance results
@@ -86,6 +101,7 @@ frequencies = [20,30,40];
 [r,y, xn, ~, ~] = poopFunc(abs(pulse_sinc_time), sigma, N);
 
 t_recieved = -Tp:dt:N * Ts + Tp -dt;
+w_recieved = t_recieved .* 1/dt;
 
 sinc_data_convolved = r;
 band1_up = sinc_data_convolved .* cos(2*pi*frequencies(1)*t_recieved);
@@ -98,24 +114,27 @@ band3_up_fft = fft(band3_up);
 
 fs = 1/dt; % sample frequency
 Nfft = length(sinc_data_convolved); % length of fft
-f = 0:fs/Nfft:fs-fs/Nfft;
-
+%f = 0:fs/Nfft:fs-fs/Nfft;
+f = -(fs-fs/Nfft)/2:fs/Nfft:(fs-fs/Nfft)/2;
+f = f * sample_period * 100;
 %UPCONVERTING
-figure, hold on
+fig3 = figure(); 
+hold on
 subplot(3,1,1),plot(f,abs(band1_up_fft))
-xlabel('Index'),ylabel('Amplitude'),title('Band 1, 20Hz')
+xlabel('Frequency (Hz)'),ylabel('Amplitude'),title('Band 1, 20Hz')
 subplot(3,1,2),plot(f,abs(band2_up_fft))
-xlabel('Index'),ylabel('Amplitude'),title('Band 2, 30Hz')
+xlabel('Frequency (Hz)'),ylabel('Amplitude'),title('Band 2, 30Hz')
 subplot(3,1,3),plot(f,abs(band3_up_fft))
-xlabel('Index'),ylabel('Amplitude'),title('Band 3, 40 Hz')
+xlabel('Frequency (Hz)'),ylabel('Amplitude'),title('Band 3, 40 Hz')
 sgtitle('Three Upscaled bands - Sinc Pulse Shape')
 hold off
 
-figure, hold on
+fig4 = figure(); 
+hold on
 plot(f,abs(band1_up_fft),'r')
 plot(f,abs(band2_up_fft),'m')
 plot(f,abs(band3_up_fft),'b')
-xlabel('Index'),ylabel('Amplitude'),title('Merged Up-Converted Channels - Sinc Pulse Shape')
+xlabel('Frequency (Hz)'),ylabel('Amplitude'),title('Merged Up-Converted Channels - Sinc Pulse Shape')
 legend('20Hz Band','30Hz Band','40Hz Band')
 hold off
 
@@ -137,26 +156,16 @@ band3_down = upconverted_sinc .* cos(2*pi*frequencies(3)*t_recieved);
 band3_down = conv(band3_down, pulse_sinc_time);
 band3_down_fft = fft(band3_down);
 
-
-figure, hold on
+fig5 = figure(); 
+hold on
 subplot(3,1,1),plot(real(band1_down_fft))
-xlabel('Index'),ylabel('Amplitude'),title('Band 1, 20Hz')
+xlabel('Frequency (Hz)'),ylabel('Amplitude'),title('Band 1, 20Hz')
 subplot(3,1,2),plot(real(band2_down_fft))
-xlabel('Index'),ylabel('Amplitude'),title('Band 2, 30Hz')
+xlabel('Frequency (Hz)'),ylabel('Amplitude'),title('Band 2, 30Hz')
 subplot(3,1,3),plot(real(band3_down_fft))
-xlabel('Index'),ylabel('Amplitude'),title('Band 3, 40 Hz')
+xlabel('Frequency (Hz)'),ylabel('Amplitude'),title('Band 3, 40 Hz')
 sgtitle('Three Downconverted bands - Sinc Pulse Shape')
 hold off
-
-% Downconverted Figure
-% figure, hold on
-% plot(f,abs((band1_down)),'r')
-% plot(f,abs((band2_down)),'m')
-% plot(f,abs((band3_down)),'b')
-% xlabel('Index'),ylabel('Amplitude'),title('Merged Down-Converted Channels - Sinc Pulse Shape')
-% legend('20Hz Band','30Hz Band','40Hz Band')
-% hold off
-% Decode 
 
 % Decode channnel 1
 decoded_1 = zeros(1, N);
@@ -203,24 +212,36 @@ for i = pulselen + 1:(pulselen * factor + mod(factor, 2))/2:filterlen-pulselen *
 end
 
 %Plot all 3 channels
-figure
+fig6 = figure(); 
+
 subplot(3,1,1), hold on
 stem(xn, 'o', 'LineWidth', 1.5)
 stem(decoded_1, 'x','LineWidth', 1)
+xlabel('Bit Index'), ylabel('Logic State')
 hold off, title('Channel 1'), legend('Transmitted Signal', 'Recieved Signal','location', 'east')
 
 subplot(3,1,2), hold on
 stem(xn, 'o','LineWidth', 1.5)
 stem(decoded_2, 'x','LineWidth', 1)
+xlabel('Bit Index'), ylabel('Logic State')
 hold off, title('Channel 2'), legend('Transmitted Signal', 'Recieved Signal','location', 'east')
 
 subplot(3,1,3),  hold on
 stem(xn, 'o','LineWidth', 1.5)
 stem(decoded_3, 'x', 'LineWidth', 1)
+xlabel('Bit Index'), ylabel('Logic State')
 title('Channel 3'), legend('Transmitted Signal', 'Recieved Signal','location', 'east')
-sgtitle('Decoded Message Accuracy for all Three Chanels')
+sgtitle('Decoded Message Accuracy for all Three Chanels - Sinc Pulse Shape')
 hold off
 
 %% poopSending Test
 [~, ~, messageOut, ~] = poopSend(pulse_sinc_time, 0, 'Will will wash your car!');
 %168 bit message
+
+%% Save Figures
+exportgraphics(fig1, fullfile(filepath, 'Pulse_shapes.jpg'), 'resolution', 300);
+exportgraphics(fig2, fullfile(filepath, 'Decoding_responses.jpg'), 'resolution', 300);
+exportgraphics(fig3, fullfile(filepath, 'Upscaled_bands.jpg'), 'resolution', 300);
+exportgraphics(fig4, fullfile(filepath, 'Merged_bands.jpg'), 'resolution', 300);
+exportgraphics(fig5, fullfile(filepath, 'Downscaled_bands.jpg'), 'resolution', 300);
+exportgraphics(fig6, fullfile(filepath, 'Channel_accuracy.jpg'), 'resolution', 300);

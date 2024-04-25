@@ -1,3 +1,8 @@
+%% Introduction : 
+% Provides all perfornace analysis seen for the sinc pulse shape. Generates
+% both pulse shapes for easy comparrison. Performance analysis of SNR,
+% bandwidth, and temporal pulse width compared. Also compares three channel
+% performance to observe any potiential disparities. 
 %% Housekeeping
 clear
 close all

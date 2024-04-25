@@ -1,6 +1,10 @@
 function [SNR,error_1,error_2,error_3] = ComSys(pulse_shape_time, frequencies, sigma, N)
 % Function Takes input arguments of factors we wish to analize for
-% performance analysis.
+% performance analysis. Acts as a way to work through the designed up and
+% downscaling seen in fartstudy2_freq. Outputs the errors seen in each
+% channel as well as total SNR. Note that the message is identical accross
+% all 3 channels, but this does not imrpove performance whatsoever.
+
 %   Detailed explanation goes here
 Tp = 0.1; % Half pulse width
 sample_period = Tp/40; % dt, pulse and recieve sample period

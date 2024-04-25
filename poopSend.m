@@ -1,4 +1,8 @@
 function [r,y, messageOut, SNR] = poopSend(pulse_shape, sigma, message)
+% Poopsend acts as a variation of Poopfunc but inputs a message which is
+% then converted to binary. The new signal is encoded and then decoded with
+% a given noise factor sigma. Returns the message recieved after decoding.
+
 binary = str2num(reshape(dec2bin(message)',1,[])');
 
 Tp = 0.1; % Half pulse width
