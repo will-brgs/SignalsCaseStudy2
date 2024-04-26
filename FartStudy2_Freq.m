@@ -13,7 +13,7 @@
 %% Housekeeping
 clear
 close all
-filepath = "C:\Users\Will\OneDrive - Washington University in St. Louis\. Signals & Systems\Case Study 2\Figures";
+filepath = "C:\Users\Will\OneDrive - Washington University in St. Louis\. Signals & Systems\Case Study 2\Figures-body";
 %% Generate Input Signal and Add Noise Factor, Bitrate = 1/Tp
 Tp = 0.1; % Half pulse width
 sample_period = Tp/40; % dt, pulse and recieve sample period

@@ -1,5 +1,5 @@
 %% Introduction : 
-% Provides all perfornace analysis seen for the rcos pulse shape. Generates
+% Provides all perfornace analysis seen for the sinc pulse shape. Generates
 % both pulse shapes for easy comparrison. Performance analysis of SNR,
 % bandwidth, and temporal pulse width compared. Also compares three channel
 % performance to observe any potiential disparities. 
@@ -7,7 +7,7 @@
 clear
 close all
 options = optimoptions('lsqcurvefit', 'Display', 'off');
-filepath = "C:\Users\Will\OneDrive - Washington University in St. Louis\. Signals & Systems\Case Study 2\Figures-appendix";
+filepath = "C:\Users\Will\OneDrive - Washington University in St. Louis\. Signals & Systems\Case Study 2\Figures-body";
 %% Generate Input Signal and Add Noise Factor, Bitrate = 1/Tp
 Tp = 0.1; % Half pulse width
 sample_period = Tp/40; % dt, pulse and recieve sample period
@@ -49,7 +49,7 @@ xlabel('Frequency'),ylabel('Amplitude'),title('Sinc Pulse in Frequency Domain')
 
 sgtitle('Pulse Shapes Utilized')
 hold off
-%% Run Communication System For Different Sigma Values, combined analysis - Rcos Pulse Shape
+%% Run Communication System For Different Sigma Values, combined analysis - Sinc Pulse Shape
 
 frequencies = [20,30,40];
 simlength = 100;
@@ -62,7 +62,7 @@ for i = 1:simlength
 internal_avg = zeros(internal_avg_length,1);
 for j = 1:internal_avg_length
 sigma(i) = 0.5 + (0.04 * i);
-[SNR(i),error_1,error_2,error_3] = ComSys(pulse_rcos_time,frequencies,sigma(i),N,Tp);
+[SNR(i),error_1,error_2,error_3] = ComSys(pulse_sinc_time,frequencies,sigma(i),N);
 
 % Calculate average error for each simulation in percent
 internal_avg(j) = (error_1 + error_2 + error_3)/3;
@@ -86,7 +86,7 @@ title('Simulation of Various Sigma Values With Averaging of All Channelss')
 legend('Simulation Datapoints', 'Regression Line')
 hold off, grid off
 
-%% Run Communication System For Different Sigma Values, channel analysis - Rcos Pulse Shape
+%% Run Communication System For Different Sigma Values, channel analysis - Sinc Pulse Shape
 
 frequencies = [20,30,40];
 simlength = 100;
@@ -105,7 +105,7 @@ internal_avg_3 = zeros(internal_avg_length,1);
 
 for j = 1:internal_avg_length
 sigma(i) = 0.5 + (0.04 * i);
-[SNR(i),error_1,error_2,error_3] = ComSys(pulse_rcos_time,frequencies,sigma(i),N, Tp);
+[SNR(i),error_1,error_2,error_3] = ComSys(pulse_sinc_time,frequencies,sigma(i),N);
 internal_avg_1(j) = error_1;
 internal_avg_2(j) = error_2;
 internal_avg_3(j) = error_3;
@@ -166,7 +166,7 @@ legend('Simulation Datapoints', 'Regression Line')
 sgtitle('Simulation of Various Sigma Values on Three Channels')
 hold off
 
-%% Run Communication System For Different Channel Bandwidth Values - Rcos Pulse Shape
+%% Run Communication System For Different Channel Bandwidth Values - Sinc Pulse Shape
 frequency_ratios = [2,3,4];
 simlength = 100;
 sigma = 0.5;
@@ -182,7 +182,7 @@ for j = 1:internal_avg_length
 frequencies = frequency_ratios .* (0.02* i);
 bandwidth(i) = frequencies(2) - frequencies(1);
 
-[~,error_1,error_2,error_3] = ComSys(pulse_rcos_time,frequencies,sigma,N,Tp);
+[~,error_1,error_2,error_3] = ComSys(pulse_sinc_time,frequencies,sigma,N);
 
 internal_avg(j) = (error_1 + error_2 + error_3)/3;
 end
@@ -203,7 +203,7 @@ title('Simulation of Various Bandwidth Values on Three Channels')
 legend('Simulation Datapoints', 'Regression Line')
 hold off, grid off
 
-%% Run Communication System For Different Temporal Pulse Durrations- Rcos Pulse Shape
+%% Run Communication System For Different Temporal Pulse Durrations- Sinc Pulse Shape
 frequencies = [20,30,40];
 simlength = 100;
 sigma = 0.5;
@@ -217,13 +217,10 @@ internal_avg = zeros(internal_avg_length,1);
 
 Ts = 0.1 + (i * 5e-3);
 Ts_vals(i) = Ts;
-t = -Ts:dt:Ts;
-pulse_rcos_time_Ts = rcosdesign(0.01,numsymbols,((length(t)-1)/numsymbols), 'normal');
-
-
+pulse_sinc_time_Ts = sinc((2*t)/Ts);
 for j = 1:internal_avg_length
 
-[~,error_1,error_2,error_3] = ComSys(pulse_rcos_time_Ts,frequencies,sigma,N,Tp);
+[~,error_1,error_2,error_3] = ComSys(pulse_sinc_time_Ts,frequencies,sigma,N);
 
 internal_avg(j) = (error_1 + error_2 + error_3)/3;
 end
@@ -244,8 +241,8 @@ plot((xfit),yfit, 'r', 'linewidth', 2)
 title('Simulation of Various Half-Pulse Temporal Widths on Three Channels')
 legend('Simulation Datapoints', 'Regression Line', 'location', 'southeast')
 hold off, grid off
+
 %% Save Figures
-% 
 % exportgraphics(fig1, fullfile(filepath, 'analysis_pulseshapes.jpg'), 'resolution', 300);
 % exportgraphics(fig2, fullfile(filepath, 'analysis_sigma_merged.jpg'), 'resolution', 300);
 % exportgraphics(fig3, fullfile(filepath, 'analysis_sigma_independent.jpg'), 'resolution', 300);
