@@ -7,6 +7,7 @@
 clear
 close all
 options = optimoptions('lsqcurvefit', 'Display', 'off');
+filepath = "C:\Users\Will\OneDrive - Washington University in St. Louis\. Signals & Systems\Case Study 2\Figures";
 %% Generate Input Signal and Add Noise Factor, Bitrate = 1/Tp
 Tp = 0.1; % Half pulse width
 sample_period = Tp/40; % dt, pulse and recieve sample period
@@ -34,7 +35,8 @@ pulse_sinc_time = sinc((2*t)/Ts);
 pulse_rcos_freq = fftshift(fft(pulse_rcos_time));
 pulse_sinc_freq = fftshift(fft(pulse_sinc_time));
 
-figure, hold on
+fig1 = figure();
+hold on
 subplot(2,2,1), stem(t,(pulse_rcos_time), 'b')
 xlabel('Time'),ylabel('Amplitude'),title('Raised Cos Pulse in Time Domain')
 subplot(2,2,2), plot(t,abs(pulse_rcos_freq),'r')
@@ -75,7 +77,8 @@ parameters = lsqcurvefit(model, initial_guess, SNR, error_avg);
 xfit = linspace(min(SNR), max(SNR), 100);
 yfit = model(parameters, xfit);
 
-figure, hold on
+fig2 = figure();
+hold on
 scatter(SNR,error_avg, 'filled'), xlabel('SNR'),ylabel('Average Error Rate (%)')
 grid on
 plot((xfit),yfit, 'r', 'linewidth', 2)
@@ -114,7 +117,7 @@ end
 
 ylimit = max(max(max(error_avg_1),max(error_avg_2)),max(error_avg_3))+1;
 
-figure
+fig3 = figure();
 %Channel 1
 subplot(1,3,1)
 scatter(SNR,error_avg_1, 'filled'), hold on
@@ -191,7 +194,8 @@ p = polyfit(bandwidth, error_avg, 4);
 xfit = min(bandwidth):0.1:max(bandwidth);
 yfit = polyval(p, xfit);
 
-figure, hold on
+fig4 = figure();
+hold on
 scatter(bandwidth,error_avg, 'filled'), xlabel('Bandwidth (Hz)'),ylabel('Average Error Rate (%)')
 grid on
 plot((xfit),yfit, 'r', 'linewidth', 2)
@@ -229,11 +233,18 @@ p = polyfit(Ts_vals, error_avg, 7);
 xfit = linspace(min(Ts_vals),max(Ts_vals),simlength);
 yfit = polyval(p, xfit);
 
-figure, hold on
+fig5 = figure();
+hold on
 scatter(Ts_vals,error_avg, 'filled'), xlabel('Ts (s)'),ylabel('Average Error Rate (%)')
 grid on
 plot((xfit),yfit, 'r', 'linewidth', 2)
 title('Simulation of Various Half-Pulse Temporal Widths on Three Channels')
 legend('Simulation Datapoints', 'Regression Line', 'location', 'southeast')
 hold off, grid off
+%% Save Figures
 
+exportgraphics(fig1, fullfile(filepath, 'analysis_pulseshapes.jpg'), 'resolution', 300);
+exportgraphics(fig2, fullfile(filepath, 'analysis_sigma_merged.jpg'), 'resolution', 300);
+exportgraphics(fig3, fullfile(filepath, 'analysis_sigma_independent.jpg'), 'resolution', 300);
+exportgraphics(fig4, fullfile(filepath, 'analysis_bandwidth.jpg'), 'resolution', 300);
+exportgraphics(fig5, fullfile(filepath, 'analysis_pulsewidth.jpg'), 'resolution', 300);
