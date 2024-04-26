@@ -204,48 +204,48 @@ legend('Simulation Datapoints', 'Regression Line')
 hold off, grid off
 
 %% Run Communication System For Different Temporal Pulse Durrations- Rcos Pulse Shape
-frequencies = [20,30,40];
-simlength = 100;
-sigma = 0.5;
-internal_avg_length = 10;
-error_avg = zeros(simlength,1);
-Ts_vals = zeros(simlength,1);
-N = 20;
-for i = 1:simlength
-internal_avg = zeros(internal_avg_length,1);
-%  Generate new pulse shape with new Ts
-
-Ts = 0.1 + (i * 5e-3);
-Ts_vals(i) = Ts;
-t = -Ts:dt:Ts;
-pulse_rcos_time_Ts = rcosdesign(0.01,numsymbols,((length(t)-1)/numsymbols), 'normal');
-for j = 1:internal_avg_length
-
-[~,error_1,error_2,error_3] = ComSys(pulse_rcos_time_Ts,frequencies,sigma,N);
-
-internal_avg(j) = (error_1 + error_2 + error_3)/3;
-end
-% Calculate average error for each simulation in percent
-error_avg(i) = sum(internal_avg) / length(internal_avg);
-end
-
-%generate regression line
-p = polyfit(Ts_vals, error_avg, 7);
-xfit = linspace(min(Ts_vals),max(Ts_vals),simlength);
-yfit = polyval(p, xfit);
-
-fig5 = figure();
-hold on
-scatter(Ts_vals,error_avg, 'filled'), xlabel('Ts (s)'),ylabel('Average Error Rate (%)')
-grid on
-plot((xfit),yfit, 'r', 'linewidth', 2)
-title('Simulation of Various Half-Pulse Temporal Widths on Three Channels')
-legend('Simulation Datapoints', 'Regression Line', 'location', 'southeast')
-hold off, grid off
+% frequencies = [20,30,40];
+% simlength = 100;
+% sigma = 0.5;
+% internal_avg_length = 10;
+% error_avg = zeros(simlength,1);
+% Ts_vals = zeros(simlength,1);
+% N = 20;
+% for i = 1:simlength
+% internal_avg = zeros(internal_avg_length,1);
+% %  Generate new pulse shape with new Ts
+% 
+% Ts = 0.1 + (i * 5e-3);
+% Ts_vals(i) = Ts;
+% t = -Ts:dt:Ts;
+% pulse_rcos_time_Ts = rcosdesign(0.01,numsymbols,((length(t)-1)/numsymbols), 'normal');
+% for j = 1:internal_avg_length
+% 
+% [~,error_1,error_2,error_3] = ComSys(pulse_rcos_time_Ts,frequencies,sigma,N);
+% 
+% internal_avg(j) = (error_1 + error_2 + error_3)/3;
+% end
+% % Calculate average error for each simulation in percent
+% error_avg(i) = sum(internal_avg) / length(internal_avg);
+% end
+% 
+% %generate regression line
+% p = polyfit(Ts_vals, error_avg, 7);
+% xfit = linspace(min(Ts_vals),max(Ts_vals),simlength);
+% yfit = polyval(p, xfit);
+% 
+% fig5 = figure();
+% hold on
+% scatter(Ts_vals,error_avg, 'filled'), xlabel('Ts (s)'),ylabel('Average Error Rate (%)')
+% grid on
+% plot((xfit),yfit, 'r', 'linewidth', 2)
+% title('Simulation of Various Half-Pulse Temporal Widths on Three Channels')
+% legend('Simulation Datapoints', 'Regression Line', 'location', 'southeast')
+% hold off, grid off
 %% Save Figures
  
 exportgraphics(fig1, fullfile(filepath, 'analysis_pulseshapes.jpg'), 'resolution', 300);
 exportgraphics(fig2, fullfile(filepath, 'analysis_sigma_merged.jpg'), 'resolution', 300);
 exportgraphics(fig3, fullfile(filepath, 'analysis_sigma_independent.jpg'), 'resolution', 300);
 exportgraphics(fig4, fullfile(filepath, 'analysis_bandwidth.jpg'), 'resolution', 300);
-exportgraphics(fig5, fullfile(filepath, 'analysis_pulsewidth.jpg'), 'resolution', 300);
+% exportgraphics(fig5, fullfile(filepath, 'analysis_pulsewidth.jpg'), 'resolution', 300);
