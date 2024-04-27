@@ -179,7 +179,7 @@ N = 20;
 for i = 1:simlength
 internal_avg = zeros(internal_avg_length,1);
 for j = 1:internal_avg_length
-frequencies = frequency_ratios .* (0.02* i);
+frequencies = frequency_ratios .* (0.2* i);
 bandwidth(i) = frequencies(2) - frequencies(1);
 
 [~,error_1,error_2,error_3] = ComSys(pulse_sinc_time,frequencies,sigma,N);
