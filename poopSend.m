@@ -57,6 +57,6 @@ for i = pulselen + 1:(pulselen * factor + mod(factor, 2))/2-1:filterlen-pulselen
 end
 
 messageOut = char(bin2dec(num2str(reshape(decoded,7,[])')))';
-disp(["Original message: ", message])
+%disp(["Original message: ", message])
 disp(["Decoded message: ", messageOut])
 SNR = (sum(y.^2))/(sum(noise.^2));

@@ -235,13 +235,23 @@ sgtitle('Decoded Message Accuracy for all Three Chanels - Sinc Pulse Shape')
 hold off
 
 %% poopSending Test
-[~, ~, messageOut, ~] = poopSend(pulse_sinc_time, 0, 'Will will wash your car!');
+disp("------------------------------------------------------------")
+
+message = ('Will will wash your car!');
+Sigma_vals = [0.7,1.2,2];
+disp(["Original message: ", message])
+for i = 1:3
+disp("------------------------------------------------------------")
+disp(['Transmision of sigma = ',num2str(Sigma_vals(i))]);
+[~, ~, messageOut, SNR] = poopSend(pulse_sinc_time, Sigma_vals(i), message);
+disp(['Calculated SNR: ',num2str(SNR)]);
+end
 %168 bit message
 
 %% Save Figures
-exportgraphics(fig1, fullfile(filepath, 'Pulse_shapes.jpg'), 'resolution', 300);
-exportgraphics(fig2, fullfile(filepath, 'Decoding_responses.jpg'), 'resolution', 300);
-exportgraphics(fig3, fullfile(filepath, 'Upscaled_bands.jpg'), 'resolution', 300);
-exportgraphics(fig4, fullfile(filepath, 'Merged_bands.jpg'), 'resolution', 300);
-exportgraphics(fig5, fullfile(filepath, 'Downscaled_bands.jpg'), 'resolution', 300);
-exportgraphics(fig6, fullfile(filepath, 'Channel_accuracy.jpg'), 'resolution', 300);
+% exportgraphics(fig1, fullfile(filepath, 'Pulse_shapes.jpg'), 'resolution', 300);
+% exportgraphics(fig2, fullfile(filepath, 'Decoding_responses.jpg'), 'resolution', 300);
+% exportgraphics(fig3, fullfile(filepath, 'Upscaled_bands.jpg'), 'resolution', 300);
+% exportgraphics(fig4, fullfile(filepath, 'Merged_bands.jpg'), 'resolution', 300);
+% exportgraphics(fig5, fullfile(filepath, 'Downscaled_bands.jpg'), 'resolution', 300);
+% exportgraphics(fig6, fullfile(filepath, 'Channel_accuracy.jpg'), 'resolution', 300);
